@@ -5,6 +5,9 @@ import openpyxl as op
 import xml.etree.cElementTree as et
 import pprint as pp
 
+
+#you can only write a string to a file. If you want to write a dictionary object, you either need to convert it into string or serialize it.
+
 root = TK.Tk()
 root.geometry('300x300')
 root.iconbitmap(r'cute.ico')
@@ -26,8 +29,8 @@ def browse_file():
 
 def getDataExcel():
     global cell_content   # store place for excel data
-    cell_content = {}
     global list_excel
+    cell_content = {}
     list_excel = []
     xlsx_string_path = browse_file()  # get user path from browse_file function
     wb = op.load_workbook(xlsx_string_path)  # load workbook
@@ -37,6 +40,7 @@ def getDataExcel():
     for keys in cell_content:
         list_excel.append(keys)
     #pp.pprint(list_excel)
+    #pp.pprint(cell_content)
 
 
 def getDataPgk():
@@ -71,15 +75,21 @@ def getDataPgk():
                                 test_dict[elements.tag.replace(str_tag, '')] = elements.text
                                 list_pgk.insert(4,elements.text)
                         list_pgk = '/'.join(list_pgk)
-                        #print(test_dict)
-                        #print(list_pgk)
-
+                        # print(test_dict)
+                        # print(list_pgk)
 
 def compare():
+    collection_of_path = {}
+    # for i in range(len(list_excel)):
+    #     pp.pprint(list_excel[i])
+
     for i in range(len(list_excel)):
-        if list_excel[i] == list_pgk:
-
-
+        if list_excel[i] != list_pgk:
+            name = list_excel[i]
+            for path in cell_content.values():
+                collection_of_path[name] = path
+    with open('test_file.txt', 'w') as file:   # open(file, mode)  # 'w' = open a file named test_file for writing
+        print(collection_of_path, file=file)
 
 
 label_excel = TK.Label(root, text='Excel')
@@ -96,6 +106,5 @@ btn_pkg.grid(row=1, column=1)
 
 btn_test = TK.Button(root, text='Test', command=compare)
 btn_test.grid(row=2, column=1)
-
 
 root.mainloop()
